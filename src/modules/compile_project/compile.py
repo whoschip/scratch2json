@@ -56,12 +56,22 @@ class ReconstructProject:
         extension_file = prj_home / "extensions" / "extensions.json"
         extension_data_file = prj_home / "extensions" / "extension_data.json"
 
+        project_data['extensions'] = []
+        project_data['extensionURLs'] = {}
+
         if extension_file.exists():
             with open(extension_file, "r", encoding="utf-8") as f:
                 extensions_info = json.load(f)
-                project_data['extensions'] = list(extensions_info.keys())
-                project_data['extensionURLs'] = extensions_info
+                clean_urls = {}
+
+                for ext_id, url in extensions_info.items():
+                    project_data['extensions'].append(ext_id)
+                    if isinstance(url, str) and url.startswith("http"):
+                        clean_urls[ext_id] = url
+
+                project_data['extensionURLs'] = clean_urls
                 print(f"Loaded extensions: {list(extensions_info.keys())}")
+                print(f"Filtered URLs: {list(clean_urls.keys())}")
 
         if extension_data_file.exists():
             with open(extension_data_file, "r", encoding="utf-8") as f:
