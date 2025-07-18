@@ -11,10 +11,9 @@ class ReconstructProject:
         pass
 
     def reconstruct(self, structured_project_path, output_dir, meta_data=None):
-        tl.info()
         print("Starting project reconstruction...")
         prj_home = Path(structured_project_path)
-        output_zip_content = Path(output_dir)
+        output_zip_content = prj_home / "builddir"
         output_zip_content.mkdir(parents=True, exist_ok=True)
 
         default_meta = {
@@ -47,7 +46,7 @@ class ReconstructProject:
             json.dump(project_data, f, indent=4, ensure_ascii=False)
         
         print("Compressing to zip...")
-        shutil.make_archive(prj_home, 'zip', output_zip_content)
+        shutil.make_archive(output_dir, 'zip', output_zip_content)
 
         print("Project reconstruction complete!")
 
@@ -90,7 +89,7 @@ class ReconstructProject:
     def _reconstruct_stage(self, prj_home, output_zip_content, project_data):
         stage_dir = prj_home / "stage"
         if not stage_dir.exists():
-            tl.warn("\nStage directory not found, skipping...")
+            print("\nStage directory not found, skipping...")
             return
 
         print("\n Reconstructing stage...")
@@ -132,7 +131,7 @@ class ReconstructProject:
     def _reconstruct_sprites(self, prj_home, output_zip_content, project_data):
         sprites_dir = prj_home / "sprites"
         if not sprites_dir.exists():
-            tl.warn("No sprites folder found, skipping...")
+            print("No sprites folder found, skipping...")
             return
 
         print("\nReconstructing sprites...")
