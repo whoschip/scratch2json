@@ -1,18 +1,17 @@
 [project]
 name = "scratch2json"
 version = "0.1.0"
-description = "CLI to convert and compile Scratch projects"
-authors = [
-    { name = "dachip", email = "itsjustchipoverhere@proton.me" }
-]
-dependencies = [
-    "ijson"
-]
+description = "CLI tool for converting and compiling Scratch projects"
+readme = "README.md"
 requires-python = ">=3.9"
+dependencies = ["ijson"]
 
 [project.scripts]
 scratch2json = "scratch2json.cli:main"
 
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["scratch2json", "scratch2json.*"]

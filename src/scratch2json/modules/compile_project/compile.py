@@ -2,7 +2,7 @@ import shutil
 import json
 from pathlib import Path
 import uuid
-from modules.tui.tui import tui
+from ..tui.tui import tui 
 
 tl = tui()
 

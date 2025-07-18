@@ -1,7 +1,7 @@
 import shutil
 import ijson
 import json
-from modules.tui.tui import tui
+from ..tui.tui import tui 
 from pathlib import Path
 
 tl = tui()
