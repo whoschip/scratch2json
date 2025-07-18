@@ -104,6 +104,11 @@ class ReconstructProject:
         if blocks_script_path.exists():
             with open(blocks_script_path, "r") as f:
                 stage_target['blocks'] = json.load(f)
+        
+        stage_meta_path = stage_dir / "stage_meta.json"
+        if stage_meta_path.exists():
+            with open(stage_meta_path, "r") as f:
+                stage_target.update(json.load(f))
 
         project_data['targets'].append(stage_target)
 
