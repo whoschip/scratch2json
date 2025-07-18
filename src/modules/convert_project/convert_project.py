@@ -1,13 +1,16 @@
 import shutil
 import ijson
 import json
+from modules.tui.tui import tui
 from pathlib import Path
 
+tl = tui()
 class ConvertProject:
     def __init__(self):
         pass
     
     def convert(self, path, zip_path):
+        tl.info()
         prj_home = Path(path)
         prj_src = Path(zip_path)
         sprite_fl = prj_home / "sprites"
@@ -128,10 +131,6 @@ class ConvertProject:
                 script.write(blocks_str)
             
     def process_extension(self, prj_src, extension_fl, extensions_list, extension_urls_dict):
-        print(f"Attempting to process extensions for directory: {extension_fl}")
-        print(f"Received extensions_list (type: {type(extensions_list)}): {extensions_list}")
-        print(f"Received extension_urls_dict (type: {type(extension_urls_dict)}): {extension_urls_dict}")
-        
         extension_data = {}
 
         if not isinstance(extensions_list, list):
