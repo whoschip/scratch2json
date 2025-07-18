@@ -132,7 +132,7 @@ class ConvertProject:
                     shutil.copy(costume_path, costumes) 
 
         if 'blocks' in target:
-            scripts = prj_home / "stage" / "scripts"
+            scripts = prj_home / "stage" 
             scripts.mkdir(parents=True, exist_ok=True)
             script_name = scripts / "script.json"
             with open(script_name, 'w') as script:
@@ -217,7 +217,7 @@ class ConvertProject:
                     shutil.copy(costume_path, costumes)  
 
         if 'blocks' in target:
-            scripts = sprite / "scripts"
+            scripts = sprite
             scripts.mkdir(parents=True, exist_ok=True)
             script_name = scripts / "script.json"
             with open(script_name, 'w') as script:
