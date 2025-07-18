@@ -56,6 +56,13 @@ class ConvertProject:
     def process_stage(self, target, prj_src, prj_home):
         print(f"Processing Stage...")
 
+        if "variables" in target:
+            variables = prj_home / "stage" / "global_variables"
+            variables.mkdir(parents=True, exist_ok=True)
+            variables_name = variables / "variables.json"
+            with open(variables_name, "w") as config_file:
+                json.dump(target["variables"], config_file, indent=4)
+            
         if 'sounds' in target:
             sounds = prj_home / "stage" / "sounds"
             sounds.mkdir(parents=True, exist_ok=True)
