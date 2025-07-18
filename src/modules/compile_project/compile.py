@@ -2,8 +2,8 @@ import shutil
 import json
 from pathlib import Path
 import uuid
-
 from modules.tui.tui import tui
+
 tl = tui()
 
 class ReconstructProject:
@@ -35,28 +35,35 @@ class ReconstructProject:
             "extensionURLs": {},
             "meta": meta_data if meta_data is not None else default_meta
         }
+
         self._reconstruct_extensions(prj_home, project_data)
         self._reconstruct_monitors(prj_home, project_data)
         self._reconstruct_stage(prj_home, output_zip_content, project_data)
         self._reconstruct_sprites(prj_home, output_zip_content, project_data)
 
-        with open(output_zip_content / "project.json", "w") as f:
-            json.dump(project_data, f, indent=4)
+        with open(output_zip_content / "project.json", "w", encoding="utf-8") as f:
+            json.dump(project_data, f, indent=4, ensure_ascii=False)
 
     def _reconstruct_extensions(self, prj_home, project_data):
         extension_file = prj_home / "extensions" / "extensions.json"
         extension_data_file = prj_home / "extensions" / "extension_data.json"
 
         if extension_file.exists():
-            with open(extension_file, "r") as f:
+            with open(extension_file, "r", encoding="utf-8") as f:
                 extensions_info = json.load(f)
                 project_data['extensions'] = list(extensions_info.keys())
                 project_data['extensionURLs'] = extensions_info
 
         if extension_data_file.exists():
-            with open(extension_data_file, "r") as f:
+            with open(extension_data_file, "r", encoding="utf-8") as f:
                 extension_data = json.load(f)
                 project_data["extensionData"] = extension_data
+
+    def _reconstruct_monitors(self, prj_home, project_data):
+        monitors_path = prj_home / "monitors.json"
+        if monitors_path.exists():
+            with open(monitors_path, "r", encoding="utf-8") as f:
+                project_data["monitors"] = json.load(f)
 
     def _reconstruct_stage(self, prj_home, output_zip_content, project_data):
         stage_dir = prj_home / "stage"
@@ -75,7 +82,7 @@ class ReconstructProject:
             "currentCostume": 0,
             "costumes": [],
             "sounds": [],
-            "id": "",
+            "id": str(uuid.uuid4()),
             "volume": 100,
             "layerOrder": 0,
             "tempo": 60,
@@ -85,110 +92,76 @@ class ReconstructProject:
             "extensionData": {}
         }
 
-        sounds_config_path = stage_dir / "sounds" / "config.json"
-        if sounds_config_path.exists():
-            with open(sounds_config_path, "r") as f:
-                sounds_data = json.load(f)
-                stage_target['sounds'] = sounds_data
-                for sound in sounds_data:
-                    if "md5ext" in sound:
-                        src_path = stage_dir / "sounds" / sound["md5ext"]
-                        if src_path.exists():
-                            shutil.copy(src_path, output_zip_content / sound["md5ext"])
-
-        costumes_config_path = stage_dir / "config.json"
-        if costumes_config_path.exists():
-            with open(costumes_config_path, "r") as f:
-                costumes_data = json.load(f)
-                stage_target['costumes'] = costumes_data
-                for costume in costumes_data:
-                    if "md5ext" in costume:
-                        src_path = stage_dir / costume["md5ext"]
-                        if src_path.exists():
-                            shutil.copy(src_path, output_zip_content / costume["md5ext"])
-
-        blocks_script_path = stage_dir / "script.json"
-        if blocks_script_path.exists():
-            with open(blocks_script_path, "r") as f:
-                stage_target['blocks'] = json.load(f)
-        
-        stage_meta_path = stage_dir / "stage_meta.json"
-        if stage_meta_path.exists():
-            with open(stage_meta_path, "r") as f:
+        meta_file = stage_dir / "stage_meta.json"
+        if meta_file.exists():
+            with open(meta_file, "r", encoding="utf-8") as f:
                 stage_target.update(json.load(f))
 
-        project_data['targets'].append(stage_target)
+        self._load_media(stage_dir, "sounds", output_zip_content, stage_target, "sounds")
+        self._load_media(stage_dir, "", output_zip_content, stage_target, "costumes")
+        self._load_script(stage_dir, "script.json", stage_target, "blocks")
 
-    def _reconstruct_monitors(self, prj_home, project_data):
-        monitors_path = prj_home / "monitors.json"
-        if monitors_path.exists():
-            with open(monitors_path, "r") as config_file:
-                project_data["monitors"] = json.load(config_file)
-            
+        project_data["targets"].append(stage_target)
 
     def _reconstruct_sprites(self, prj_home, output_zip_content, project_data):
         sprites_dir = prj_home / "sprites"
         if not sprites_dir.exists():
             return
 
-        for sprite_path in sprites_dir.iterdir():
-            if sprite_path.is_dir():
-                sprite_name = sprite_path.name
-                sprite_target = {
-                    "isStage": False,
-                    "name": sprite_name,
-                    "variables": {},
-                    "lists": {},
-                    "broadcasts": {},
-                    "customVars": [],
-                    "blocks": {},
-                    "comments": {},
-                    "currentCostume": 0,
-                    "costumes": [],
-                    "sounds": [],
-                    "id": "",
-                    "volume": 100,
-                    "layerOrder": 1,
-                    "visible": True,
-                    "x": 0,
-                    "y": 0,
-                    "size": 100,
-                    "direction": 90,
-                    "draggable": False,
-                    "rotationStyle": "all around",
-                    "extensionData": {}
-                } 
-                sprite_meta_file = sprite_path / "sprite_meta.json"
-                if sprite_meta_file.exists():
-                    with open(sprite_meta_file, "r") as f:
-                        sprite_target.update(json.load(f))
+        for sprite_dir in sprites_dir.iterdir():
+            if not sprite_dir.is_dir():
+                continue
 
+            sprite_target = {
+                "isStage": False,
+                "name": sprite_dir.name,
+                "variables": {},
+                "lists": {},
+                "broadcasts": {},
+                "customVars": [],
+                "blocks": {},
+                "comments": {},
+                "currentCostume": 0,
+                "costumes": [],
+                "sounds": [],
+                "id": str(uuid.uuid4()),
+                "volume": 100,
+                "layerOrder": 1,
+                "visible": True,
+                "x": 0,
+                "y": 0,
+                "size": 100,
+                "direction": 90,
+                "draggable": False,
+                "rotationStyle": "all around",
+                "extensionData": {}
+            }
 
-                sounds_config_path = sprite_path / "sounds" / "config.json"
-                if sounds_config_path.exists():
-                    with open(sounds_config_path, "r") as f:
-                        sounds_data = json.load(f)
-                        sprite_target['sounds'] = sounds_data
-                        for sound in sounds_data:
-                            if "md5ext" in sound:
-                                src_path = sprite_path / "sounds" / sound["md5ext"]
-                                if src_path.exists():
-                                    shutil.copy(src_path, output_zip_content / sound["md5ext"])
+            meta_file = sprite_dir / "sprite_meta.json"
+            if meta_file.exists():
+                with open(meta_file, "r", encoding="utf-8") as f:
+                    sprite_target.update(json.load(f))
 
-                costumes_config_path = sprite_path / "costumes" / "config.json"
-                if costumes_config_path.exists():
-                    with open(costumes_config_path, "r") as f:
-                        costumes_data = json.load(f)
-                        sprite_target['costumes'] = costumes_data
-                        for costume in costumes_data:
-                            if "md5ext" in costume:
-                                src_path = sprite_path / "costumes" / costume["md5ext"]
-                                if src_path.exists():
-                                    shutil.copy(src_path, output_zip_content / costume["md5ext"])
+            self._load_media(sprite_dir, "sounds", output_zip_content, sprite_target, "sounds")
+            self._load_media(sprite_dir, "costumes", output_zip_content, sprite_target, "costumes")
+            self._load_script(sprite_dir, "script.json", sprite_target, "blocks")
 
-                blocks_script_path = sprite_path / "script.json"
-                if blocks_script_path.exists():
-                    with open(blocks_script_path, "r") as f:
-                        sprite_target['blocks'] = json.load(f)
+            project_data["targets"].append(sprite_target)
 
-                project_data['targets'].append(sprite_target)
+    def _load_media(self, base_path, subfolder, output_path, target_obj, key):
+        config_path = base_path / subfolder / "config.json" if subfolder else base_path / "config.json"
+        if config_path.exists():
+            with open(config_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                target_obj[key] = data
+                for item in data:
+                    if "md5ext" in item:
+                        file_path = base_path / subfolder / item["md5ext"] if subfolder else base_path / item["md5ext"]
+                        if file_path.exists():
+                            shutil.copy(file_path, output_path / item["md5ext"])
+
+    def _load_script(self, base_path, file_name, target_obj, key):
+        script_path = base_path / file_name
+        if script_path.exists():
+            with open(script_path, "r", encoding="utf-8") as f:
+                target_obj[key] = json.load(f)
