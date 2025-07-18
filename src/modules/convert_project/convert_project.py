@@ -145,6 +145,49 @@ class ConvertProject:
         sprite.mkdir(parents=True, exist_ok=True)
         print(f"Processing Sprites : {sprite_name}")
 
+        sprite_meta_info = {}
+        if "comments" in target:
+            sprite_meta_info["comments"] = target["comments"]
+        if "currentCostume" in target:
+            sprite_meta_info["currentCostume"] = target["currentCostume"]
+        if "variables" in target:
+            sprite_meta_info["variables"] = target["variables"]
+        if "lists" in target:
+            sprite_meta_info["lists"] = target["lists"]
+        if "broadcasts" in target:
+            sprite_meta_info["broadcasts"] = target["broadcasts"]
+        if "customVars" in target:
+            sprite_meta_info["customVars"] = target["customVars"]
+        if "volume" in target:
+            sprite_meta_info["volume"] = target["volume"]
+        if "layerOrder" in target:
+            sprite_meta_info["layerOrder"] = target["layerOrder"]
+        if "visible" in target:
+            sprite_meta_info["visible"] = target["visible"]
+        if "x" in target:
+            sprite_meta_info["x"] = target["x"]
+        if "y" in target:
+            sprite_meta_info["y"] = target["y"]
+        if "size" in target:
+            sprite_meta_info["size"] = target["size"]
+        if "direction" in target:
+            sprite_meta_info["direction"] = target["direction"]
+        if "draggable" in target:
+            sprite_meta_info["draggable"] = target["draggable"]
+        if "rotationStyle" in target:
+            sprite_meta_info["rotationStyle"] = target["rotationStyle"]
+        if "extensionData" in target:
+            sprite_meta_info["extensionData"] = target["extensionData"]
+
+
+        if sprite_meta_info: 
+            sprite_meta_file_path = sprite / "sprite_meta.json" 
+            with open(sprite_meta_file_path, 'w') as f:
+                json.dump(sprite_meta_info, f, indent=4)
+            print(f"Sprite metadata written to {sprite_meta_file_path}")
+
+        # region end
+
         if 'sounds' in target:
             sounds = sprite / "sounds"
             sounds.mkdir(parents=True, exist_ok=True)
