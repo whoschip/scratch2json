@@ -61,26 +61,28 @@ class ConvertProject:
             sounds.mkdir(parents=True, exist_ok=True)
             sounds_name = sounds / "config.json"
             with open(sounds_name, "w") as config_file:
-                config_file.write(str(target["sounds"]))
+                json.dump(target["sounds"], config_file, indent=4)
 
             for sound in target["sounds"]:
                 sound_name = sound["assetId"]
                 sound_format = sound["md5ext"]
                 sound_path = prj_src / f"{sound_format}"
-                shutil.copy(sound_path, sounds)  
+                if sound_path.exists():
+                    shutil.copy(sound_path, sounds)  
         
         if 'costumes' in target:
             costumes = prj_home / "stage" 
             costumes.mkdir(parents=True, exist_ok=True)
             costumes_name = costumes / "config.json"
             with open(costumes_name, "w") as config_file:
-                config_file.write(str(target["costumes"]))
+                json.dump(target["costumes"], config_file, indent=4)
 
             for costume in target["costumes"]:
                 costume_name = costume["assetId"]
                 costume_format = costume["md5ext"]
                 costume_path = prj_src / f"{costume_format}"
-                shutil.copy(costume_path, costumes) 
+                if costume_path.exists():
+                    shutil.copy(costume_path, costumes) 
 
         if 'blocks' in target:
             scripts = prj_home / "stage" / "scripts"
@@ -101,26 +103,28 @@ class ConvertProject:
             sounds.mkdir(parents=True, exist_ok=True)
             sounds_name = sounds / "config.json"
             with open(sounds_name, "w") as config_file:
-                config_file.write(str(target["sounds"]))
+                json.dump(target["sounds"], config_file, indent=4)
 
             for sound in target["sounds"]:
                 sound_name = sound["assetId"]
                 sound_format = sound["md5ext"]
                 sound_path = prj_src / f"{sound_format}"
-                shutil.copy(sound_path, sounds)  
+                if sound_path.exists():
+                    shutil.copy(sound_path, sounds)  
         
         if 'costumes' in target:
             costumes = sprite / "costumes"
             costumes.mkdir(parents=True, exist_ok=True)
             costumes_name = costumes / "config.json"
             with open(costumes_name, "w") as config_file:
-                config_file.write(str(target["costumes"]))
+                json.dump(target["costumes"], config_file, indent=4)
 
             for costume in target["costumes"]:
                 costume_name = costume["assetId"]
                 costume_format = costume["md5ext"]
                 costume_path = prj_src / f"{costume_format}"
-                shutil.copy(costume_path, costumes)  
+                if costume_path.exists():
+                    shutil.copy(costume_path, costumes)  
 
         if 'blocks' in target:
             scripts = sprite / "scripts"
