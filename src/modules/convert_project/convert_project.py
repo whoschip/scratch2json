@@ -68,6 +68,8 @@ class ConvertProject:
 
         # Collect stage metadata into a single dictionary
         stage_meta_info = {}
+        if 'id' in target:
+            stage_meta_info["id"] = target["id"]
         if "comments" in target:
             stage_meta_info["comments"] = target["comments"]
         if "currentCostume" in target:
@@ -147,6 +149,8 @@ class ConvertProject:
 
         # region create metadata
         sprite_meta_info = {}
+        if "id" in target:
+            sprite_meta_info["id"] = target['id']
         if "comments" in target:
             sprite_meta_info["comments"] = target["comments"]
         if "currentCostume" in target:
@@ -224,21 +228,21 @@ class ConvertProject:
             with open(script_name, 'w') as script:
                 blocks_str = json.dumps(target["blocks"], indent=4)
                 script.write(blocks_str)
-            
+                
     def process_extension(self, prj_src, extension_fl, extensions_list, extension_urls_dict):
         extension_data = {}
+        extension_extra_data = {}
 
         if not isinstance(extensions_list, list):
             print(f"Error: 'extensions' data is not a list. Type found: {type(extensions_list)}")
             return
-        
+
         if not isinstance(extension_urls_dict, dict):
             print(f"Error: 'extensionURLs' data is not a dictionary. Type found: {type(extension_urls_dict)}")
             return
 
         for ext in extensions_list:
             print(f"Processing Extension: '{ext}'")
-            
             if ext in extension_urls_dict:
                 extension_data[ext] = extension_urls_dict[ext]
             else:
@@ -250,3 +254,17 @@ class ConvertProject:
                 json.dump(extension_data, f, indent=4)
         except Exception as e:
             print(f"Error writing extensions.json to file: {e}")
+
+        project_json_path = prj_src / "project.json"
+        if project_json_path.exists():
+            try:
+                with open(project_json_path, "r") as f:
+                    raw = json.load(f)
+                    if "extensionData" in raw:
+                        extension_extra_data = raw["extensionData"]
+                        ext_data_file = extension_fl / "extension_data.json"
+                        with open(ext_data_file, "w") as f2:
+                            json.dump(extension_extra_data, f2, indent=4)
+                        print(f"\nextensionData saved to {ext_data_file}")
+            except Exception as e:
+                print(f"Error extracting extensionData: {e}")

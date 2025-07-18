@@ -45,11 +45,18 @@ class ReconstructProject:
 
     def _reconstruct_extensions(self, prj_home, project_data):
         extension_file = prj_home / "extensions" / "extensions.json"
+        extension_data_file = prj_home / "extensions" / "extension_data.json"
+
         if extension_file.exists():
             with open(extension_file, "r") as f:
                 extensions_info = json.load(f)
                 project_data['extensions'] = list(extensions_info.keys())
                 project_data['extensionURLs'] = extensions_info
+
+        if extension_data_file.exists():
+            with open(extension_data_file, "r") as f:
+                extension_data = json.load(f)
+                project_data["extensionData"] = extension_data
 
     def _reconstruct_stage(self, prj_home, output_zip_content, project_data):
         stage_dir = prj_home / "stage"
@@ -117,6 +124,7 @@ class ReconstructProject:
         if monitors_path.exists():
             with open(monitors_path, "r") as config_file:
                 project_data["monitors"] = json.load(config_file)
+            
 
     def _reconstruct_sprites(self, prj_home, output_zip_content, project_data):
         sprites_dir = prj_home / "sprites"
@@ -182,6 +190,5 @@ class ReconstructProject:
                 if blocks_script_path.exists():
                     with open(blocks_script_path, "r") as f:
                         sprite_target['blocks'] = json.load(f)
-                
 
                 project_data['targets'].append(sprite_target)
