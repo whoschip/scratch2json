@@ -68,7 +68,7 @@ class ReconstructProject:
             "currentCostume": 0,
             "costumes": [],
             "sounds": [],
-            "id": str(uuid.uuid4().hex),
+            "id": "",
             "volume": 100,
             "layerOrder": 0,
             "tempo": 60,
@@ -138,7 +138,7 @@ class ReconstructProject:
                     "currentCostume": 0,
                     "costumes": [],
                     "sounds": [],
-                    "id": str(uuid.uuid4().hex),
+                    "id": "",
                     "volume": 100,
                     "layerOrder": 1,
                     "visible": True,
@@ -178,9 +178,10 @@ class ReconstructProject:
                                 if src_path.exists():
                                     shutil.copy(src_path, output_zip_content / costume["md5ext"])
 
-                blocks_script_path = sprite_path / "scripts" / "script.json"
+                blocks_script_path = sprite_path / "script.json"
                 if blocks_script_path.exists():
                     with open(blocks_script_path, "r") as f:
                         sprite_target['blocks'] = json.load(f)
+                
 
                 project_data['targets'].append(sprite_target)
