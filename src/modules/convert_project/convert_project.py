@@ -96,12 +96,6 @@ class ConvertProject:
             print(f"Stage metadata written to {stage_meta_file}")
 
         # region end
-        if "variables" in target:
-            variables = prj_home / "stage" 
-            variables.mkdir(parents=True, exist_ok=True)
-            variables_name = variables / "global_variables.json"
-            with open(variables_name, "w") as config_file:
-                json.dump(target["variables"], config_file, indent=4)
             
         if 'sounds' in target:
             sounds = prj_home / "stage" / "sounds"
@@ -145,6 +139,7 @@ class ConvertProject:
         sprite.mkdir(parents=True, exist_ok=True)
         print(f"Processing Sprites : {sprite_name}")
 
+        # region create metadata
         sprite_meta_info = {}
         if "comments" in target:
             sprite_meta_info["comments"] = target["comments"]
