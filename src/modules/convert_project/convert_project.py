@@ -56,6 +56,41 @@ class ConvertProject:
     def process_stage(self, target, prj_src, prj_home):
         print(f"Processing Stage...")
 
+        # region create meta data
+        stage_dir = prj_home / "stage"
+        stage_dir.mkdir(parents=True, exist_ok=True)
+
+        # Collect stage metadata into a single dictionary
+        stage_meta_info = {}
+        if "comments" in target:
+            stage_meta_info["comments"] = target["comments"]
+        if "currentCostume" in target:
+            stage_meta_info["currentCostume"] = target["currentCostume"]
+        if "variables" in target:
+            stage_meta_info["variables"] = target["variables"]
+        if "lists" in target:
+            stage_meta_info["lists"] = target["lists"]
+        if "broadcasts" in target:
+            stage_meta_info["broadcasts"] = target["broadcasts"]
+        if "customVars" in target:
+            stage_meta_info["customVars"] = target["customVars"]
+        if "volume" in target:
+            stage_meta_info["volume"] = target["volume"]
+        if "layerOrder" in target:
+            stage_meta_info["layerOrder"] = target["layerOrder"]
+        if "tempo" in target:
+            stage_meta_info["tempo"] = target["tempo"]
+        if "videoTransparency" in target:
+            stage_meta_info["videoTransparency"] = target["videoTransparency"]
+        if "videoState" in target:
+            stage_meta_info["videoState"] = target["videoState"]
+        if "textToSpeechLanguage" in target:
+            stage_meta_info["textToSpeechLanguage"] = target["textToSpeechLanguage"]
+        if "extensionData" in target:
+            stage_meta_info["extensionData"] = target["extensionData"]
+
+
+        # region end
         if "variables" in target:
             variables = prj_home / "stage" / "global_variables"
             variables.mkdir(parents=True, exist_ok=True)
