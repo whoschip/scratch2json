@@ -12,6 +12,7 @@ class ReconstructProject:
 
     def reconstruct(self, structured_project_path, output_dir, meta_data=None):
         tl.info()
+        print("Starting project reconstruction...")
         prj_home = Path(structured_project_path)
         output_zip_content = Path(output_dir)
         output_zip_content.mkdir(parents=True, exist_ok=True)
@@ -41,10 +42,17 @@ class ReconstructProject:
         self._reconstruct_stage(prj_home, output_zip_content, project_data)
         self._reconstruct_sprites(prj_home, output_zip_content, project_data)
 
+        print("\nWriting project.json...")
         with open(output_zip_content / "project.json", "w", encoding="utf-8") as f:
             json.dump(project_data, f, indent=4, ensure_ascii=False)
+        
+        print("Compressing to zip...")
+        shutil.make_archive(prj_home, 'zip', output_zip_content)
+
+        print("Project reconstruction complete!")
 
     def _reconstruct_extensions(self, prj_home, project_data):
+        print("Reconstructing extensions...")
         extension_file = prj_home / "extensions" / "extensions.json"
         extension_data_file = prj_home / "extensions" / "extension_data.json"
 
@@ -53,23 +61,29 @@ class ReconstructProject:
                 extensions_info = json.load(f)
                 project_data['extensions'] = list(extensions_info.keys())
                 project_data['extensionURLs'] = extensions_info
+                print(f"Loaded extensions: {list(extensions_info.keys())}")
 
         if extension_data_file.exists():
             with open(extension_data_file, "r", encoding="utf-8") as f:
                 extension_data = json.load(f)
                 project_data["extensionData"] = extension_data
+                print("Loaded extension data")
 
     def _reconstruct_monitors(self, prj_home, project_data):
+        print("\nReconstructing monitors...")
         monitors_path = prj_home / "monitors.json"
         if monitors_path.exists():
             with open(monitors_path, "r", encoding="utf-8") as f:
                 project_data["monitors"] = json.load(f)
+                print("Monitors loaded")
 
     def _reconstruct_stage(self, prj_home, output_zip_content, project_data):
         stage_dir = prj_home / "stage"
         if not stage_dir.exists():
+            tl.warn("\nStage directory not found, skipping...")
             return
 
+        print("\n Reconstructing stage...")
         stage_target = {
             "isStage": True,
             "name": "Stage",
@@ -96,18 +110,22 @@ class ReconstructProject:
         if meta_file.exists():
             with open(meta_file, "r", encoding="utf-8") as f:
                 stage_target.update(json.load(f))
+                print("Stage metadata loaded")
 
         self._load_media(stage_dir, "sounds", output_zip_content, stage_target, "sounds")
         self._load_media(stage_dir, "", output_zip_content, stage_target, "costumes")
         self._load_script(stage_dir, "script.json", stage_target, "blocks")
 
         project_data["targets"].append(stage_target)
+        print("\nStage reconstructed")
 
     def _reconstruct_sprites(self, prj_home, output_zip_content, project_data):
         sprites_dir = prj_home / "sprites"
         if not sprites_dir.exists():
+            tl.warn("No sprites folder found, skipping...")
             return
 
+        print("\nReconstructing sprites...")
         for sprite_dir in sprites_dir.iterdir():
             if not sprite_dir.is_dir():
                 continue
@@ -141,12 +159,14 @@ class ReconstructProject:
             if meta_file.exists():
                 with open(meta_file, "r", encoding="utf-8") as f:
                     sprite_target.update(json.load(f))
+                    print(f"Sprite meta loaded for {sprite_dir.name}")
 
             self._load_media(sprite_dir, "sounds", output_zip_content, sprite_target, "sounds")
             self._load_media(sprite_dir, "costumes", output_zip_content, sprite_target, "costumes")
             self._load_script(sprite_dir, "script.json", sprite_target, "blocks")
 
             project_data["targets"].append(sprite_target)
+            print(f"\nSprite '{sprite_dir.name}' reconstructed")
 
     def _load_media(self, base_path, subfolder, output_path, target_obj, key):
         config_path = base_path / subfolder / "config.json" if subfolder else base_path / "config.json"
@@ -159,9 +179,11 @@ class ReconstructProject:
                         file_path = base_path / subfolder / item["md5ext"] if subfolder else base_path / item["md5ext"]
                         if file_path.exists():
                             shutil.copy(file_path, output_path / item["md5ext"])
+                            print(f"Copied {item['md5ext']}")
 
     def _load_script(self, base_path, file_name, target_obj, key):
         script_path = base_path / file_name
         if script_path.exists():
             with open(script_path, "r", encoding="utf-8") as f:
                 target_obj[key] = json.load(f)
+                print(f"Loaded {file_name}")
