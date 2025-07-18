@@ -88,13 +88,18 @@ class ConvertProject:
             stage_meta_info["textToSpeechLanguage"] = target["textToSpeechLanguage"]
         if "extensionData" in target:
             stage_meta_info["extensionData"] = target["extensionData"]
-
+        
+        if stage_meta_info: 
+            stage_meta_file = stage_dir / "stage_meta.json"
+            with open(stage_meta_file, 'w') as f:
+                json.dump(stage_meta_info, f, indent=4)
+            print(f"Stage metadata written to {stage_meta_file}")
 
         # region end
         if "variables" in target:
-            variables = prj_home / "stage" / "global_variables"
+            variables = prj_home / "stage" 
             variables.mkdir(parents=True, exist_ok=True)
-            variables_name = variables / "variables.json"
+            variables_name = variables / "global_variables.json"
             with open(variables_name, "w") as config_file:
                 json.dump(target["variables"], config_file, indent=4)
             
