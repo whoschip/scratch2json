@@ -33,10 +33,10 @@ class ReconstructProject:
             "extensionData": {},
             "extensions": [],
             "extensionURLs": {},
-            "meta": meta_data if meta_data is not None else default_meta 
+            "meta": meta_data if meta_data is not None else default_meta
         }
-
         self._reconstruct_extensions(prj_home, project_data)
+        self._reconstruct_monitors(prj_home, project_data)
         self._reconstruct_stage(prj_home, output_zip_content, project_data)
         self._reconstruct_sprites(prj_home, output_zip_content, project_data)
 
@@ -100,12 +100,18 @@ class ReconstructProject:
                         if src_path.exists():
                             shutil.copy(src_path, output_zip_content / costume["md5ext"])
 
-        blocks_script_path = stage_dir / "scripts" / "script.json"
+        blocks_script_path = stage_dir / "script.json"
         if blocks_script_path.exists():
             with open(blocks_script_path, "r") as f:
                 stage_target['blocks'] = json.load(f)
 
         project_data['targets'].append(stage_target)
+
+    def _reconstruct_monitors(self, prj_home, project_data):
+        monitors_path = prj_home / "monitors.json"
+        if monitors_path.exists():
+            with open(monitors_path, "r") as config_file:
+                project_data["monitors"] = json.load(config_file)
 
     def _reconstruct_sprites(self, prj_home, output_zip_content, project_data):
         sprites_dir = prj_home / "sprites"
