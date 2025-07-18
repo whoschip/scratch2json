@@ -52,6 +52,35 @@ def compile_cmd(src, dst, turbowarp=False):
         )
         print("✅ compiled w/o TurboWarp meta")
 
+def fastcompile_cmd(turbowarp=False):
+    src = os.getcwd()
+    dst = os.getcwd()
+
+    rk = ReconstructProject()
+
+    if turbowarp:
+        turbowarp_meta = {
+            "semver": "3.0.0",
+            "vm": "0.2.0",
+            "agent": "",
+            "platform": {
+                "name": "TurboWarp",
+                "url": "https://turbowarp.org/"
+            }
+        }
+        rk.reconstruct(
+            structured_project_path=src,
+            output_dir=dst,
+            meta_data=turbowarp_meta
+        )
+        print("✅ compiled w/ TurboWarp meta 🌀")
+    else:
+        rk.reconstruct(
+            structured_project_path=src,
+            output_dir=dst
+        )
+        print("✅ compiled w/o TurboWarp meta")
+
 def about_cmd():
     print("""
 scratch2json — CLI for converting and compiling Scratch projects
@@ -65,7 +94,7 @@ scratch2json — CLI for converting and compiling Scratch projects
 """)
 
 def main():
-    parser = argparse.ArgumentParser(prog="ts", description="TS scratch project CLI 🔥")
+    parser = argparse.ArgumentParser(prog="scratch2json", description="scratch project CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # convert
@@ -74,6 +103,7 @@ def main():
     convert_parser.add_argument("dst", help="path to save converted JSON")
 
     # compile
+    fastcompile_parser = subparsers.add_parser("fastcompile", help="input is the current folder, ouput is also the current folder")
     compile_parser = subparsers.add_parser("compile", help="compile structured JSON to .sb3")
     compile_parser.add_argument("src", help="path to structured project")
     compile_parser.add_argument("dst", help="path to save compiled .sb3")
@@ -92,6 +122,8 @@ def main():
                 convert_cmd(args.src, args.dst)
             case "compile":
                 compile_cmd(args.src, args.dst, args.turbowarp)
+            case "fastcompile":
+                fastcompile_cmd(arg.turbowarp)
             case "about":
                 about_cmd()
     except Exception as e:
