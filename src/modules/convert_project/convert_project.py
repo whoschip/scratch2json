@@ -23,12 +23,18 @@ class ConvertProject:
         with open(json_file, "r") as f:
             try:
                 project_data = json.load(f)
+                monitors = project_data.get('monitors', [])
                 targets = project_data.get('targets', [])
 
                 if 'extensions' in project_data and 'extensionURLs' in project_data:
                     self.process_extension(prj_src, extension_fl, project_data['extensions'], project_data['extensionURLs'])
                 else:
                     pass
+                
+                print("\n Saving monitors...")
+                monitors_path = prj_home / "monitors.json"
+                with open(monitors_path, 'w') as config_file:
+                    json.dump(monitors, config_file, indent=4)
 
                 stage_processed = False
                 
