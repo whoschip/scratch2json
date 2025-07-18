@@ -10,7 +10,6 @@ class ConvertProject:
         pass
     
     def convert(self, path, zip_path):
-        tl.info()
         prj_home = Path(path)
         prj_src = Path(zip_path)
         sprite_fl = prj_home / "sprites"
