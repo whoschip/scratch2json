@@ -149,7 +149,12 @@ class ReconstructProject:
                     "draggable": False,
                     "rotationStyle": "all around",
                     "extensionData": {}
-                }
+                } 
+                sprite_meta_file = sprite_path / "sprite_meta.json"
+                if sprite_meta_file.exists():
+                    with open(sprite_meta_file, "r") as f:
+                        sprite_target.update(json.load(f))
+
 
                 sounds_config_path = sprite_path / "sounds" / "config.json"
                 if sounds_config_path.exists():
