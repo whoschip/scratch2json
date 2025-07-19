@@ -104,6 +104,8 @@ def main():
 
     # compile
     fastcompile_parser = subparsers.add_parser("fastcompile", help="input is the current folder, ouput is also the current folder")
+    fastcompile_parser.add_argument("--turbowarp", action="store_true", help="use TurboWarp meta")
+
     compile_parser = subparsers.add_parser("compile", help="compile structured JSON to .sb3")
     compile_parser.add_argument("src", help="path to structured project")
     compile_parser.add_argument("dst", help="path to save compiled .sb3")
@@ -123,7 +125,7 @@ def main():
             case "compile":
                 compile_cmd(args.src, args.dst, args.turbowarp)
             case "fastcompile":
-                fastcompile_cmd(arg.turbowarp)
+                fastcompile_cmd(args.turbowarp)
             case "about":
                 about_cmd()
     except Exception as e:
