@@ -90,7 +90,7 @@ scratch2json — CLI for converting and compiling Scratch projects
 • --turbowarp : optional flag to add TurboWarp-compatible meta
 • author   : dachip
 • license  : MIT
-• repo     : https://github.com/yourname/scratch2github
+• repo     : https://github.com/whoschip/scratch2github
 """)
 
 def main():
