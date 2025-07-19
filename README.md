@@ -26,5 +26,5 @@ pip install .
 - [x] Make convert work  
 - [x] Make compile work  
 - [x] Write scratch2json CLI  
-- [ ] Learn js and make a ext to auto load & Make backend for the js ext
+- [ ] Learn js and make a ext to auto load & Make backend for the js ext (help needed)
 - [ ] All good  
