@@ -18,3 +18,13 @@ Supports compatibility with [TurboWarp](https://turbowarp.org) and [PenguinMod](
 git clone https://github.com/yourname/scratch2github
 cd scratch2github
 pip install .
+```
+---
+
+## TODO
+
+- [x] Make convert work  
+- [x] Make compile work  
+- [x] Write scratch2json CLI  
+- [ ] Learn js and make a ext to auto load & Make backend for the js ext
+- [ ] All good  
