@@ -2,86 +2,62 @@
 // ID: S2J
 // Description: Scratch to json made easier with ts
 // By: Chip
+// License MIT prob
 
 class ChipS2J {
     constructor(runtime) {
         this.runtime = runtime;
+        this.saveTimeout = null;
+
+        this.runtime.on("PROJECT_CHANGED", () => {
+            this.scheduleSave();
+        });
     }
 
     getInfo() {
         return {
-            id: "SJ2",
+            id: "S2J",
             name: "Scratch2Json",
-            blocks: [
-                {
-                    opcode: "exportPMP",
-                    blockType: Scratch.BlockType.COMMAND,
-                    text: "export project as .pmp"
-                }
-            ]
+            blocks: [] // No blocks needed
         };
     }
 
+    scheduleSave() {
+        if (this.saveTimeout) {
+            clearTimeout(this.saveTimeout);
+        }
+        this.saveTimeout = setTimeout(() => {
+            this.exportPMP();
+        }, 10000);
+    }
+
     async exportPMP() {
-        // Access sb3 serializer from global
-        const sb3 = window.PenguinMod?.sb3 || window.TurboWarp?.sb3;
-        const JSZip = window.JSZip;
-        if (!sb3 || !JSZip) {
-            alert("sb3 serializer or JSZip is missing!");
+        const vm = this.runtime?.vm || window.vm;
+        if (!vm) {
+            console.warn('VM instance not found! Are you in PenguinMod or TurboWarp?');
             return;
         }
 
-        // 1. Serialize project
-        const projectJson = sb3.serialize(this.runtime);
-        const zip = new JSZip();
-        zip.file("project.json", JSON.stringify(projectJson));
+        try {
+            const blob = await vm.saveProjectSb3('blob');
+            const formData = new FormData();
+            formData.append("file", blob, "project.pmp");
 
-        // 2. Add assets (costumes and sounds)
-        const storage = this.runtime.storage;
-        const costumesAdded = new Set();
-        const soundsAdded = new Set();
+            const res = await fetch("http://localhost:5000/api/upload", {
+                method: "POST",
+                body: formData
+            });
 
-        for (const target of projectJson.targets) {
-            for (const costume of target.costumes) {
-                if (!costume.md5ext || costumesAdded.has(costume.md5ext)) continue;
-                costumesAdded.add(costume.md5ext);
-                try {
-                    const asset = await storage.load(
-                        storage.AssetType.ImageBitmap,
-                        costume.assetId,
-                        costume.dataFormat
-                    );
-                    zip.file(costume.md5ext, asset.data);
-                } catch (e) {}
+            const result = await res.json();
+            if (res.ok) {
+                console.log("Uploaded successfully: " + (result.msg || "Success"));
+            } else {
+                console.warn("Upload failed: " + (result.error || "unknown error"));
             }
-            for (const sound of target.sounds) {
-                if (!sound.md5ext || soundsAdded.has(sound.md5ext)) continue;
-                soundsAdded.add(sound.md5ext);
-                try {
-                    const asset = await storage.load(
-                        storage.AssetType.Sound,
-                        sound.assetId,
-                        sound.dataFormat
-                    );
-                    zip.file(sound.md5ext, asset.data);
-                } catch (e) {}
-            }
+        } catch (err) {
+            console.error("Error posting to backend: " + (err.message || err));
         }
-
-        // 3. Trigger file download
-        zip.generateAsync({ type: "blob" }).then(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "project.pmp";
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 100);
-        });
     }
 }
 
-Scratch.extensions.register(new ExportProjectExtension(Scratch.vm.runtime));
+Scratch.extensions.register(new ChipS2J(Scratch.vm.runtime));
