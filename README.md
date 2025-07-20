@@ -10,6 +10,18 @@ Supports compatibility with [TurboWarp](https://turbowarp.org) and [PenguinMod](
 - Modular design, suitable for extension or automation
 
 ---
+### What & Why
+
+`scratch2json` helps you convert Scratch `.sb3` files into structured, readable folders — and back again.
+
+This structure makes it easier to:
+
+- Use Git for version control (track code changes, manage history)
+- Collaborate with others on Scratch projects
+
+Whether you're modding, extending, or just organizing your projects better, this tool gives you full control over how Scratch data is stored and handled.
+
+---
 
 ## Installation
 
