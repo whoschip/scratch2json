@@ -9,16 +9,31 @@ class ConvertProject:
     def __init__(self):
         pass
     
-    def convert(self, path, zip_path):
+    def convert(self, path, zip_path, clear=False):
+        # init stuff
         prj_home = Path(path)
         prj_src = Path(zip_path)
         sprite_fl = prj_home / "sprites"
         extension_fl = prj_home / "extensions"
-
+        stage_dir = prj_home / "stage"
         json_file = prj_src / "project.json"
+        
+        # nuke
+        if clear == True:
+            def nuke(path):
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                else:
+                    pass
+            
+                safe_nuke(sprite_fl)
+                safe_nuke(extension_fl)
+                safe_nuke(stage_dir)
+        
         
         extension_fl.mkdir(parents=True, exist_ok=True)
 
+        
         with open(json_file, "r") as f:
             try:
                 project_data = json.load(f)
