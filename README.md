@@ -1,4 +1,9 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/whoschip/scratch2json/refs/heads/main/gh/textlogo.svg" alt="Logo" width="400"/>
+</p>
+
 # scratch2json
+
 
 A command-line tool for converting Scratch `.sb3` projects into structured JSON and compiling structured JSON back into Scratch `.sb3` format.  
 Supports compatibility with [TurboWarp](https://turbowarp.org) and [PenguinMod](https://penguinmod.com).
