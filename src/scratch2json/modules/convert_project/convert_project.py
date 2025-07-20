@@ -1,6 +1,7 @@
 import shutil
 import ijson
 import json
+import os
 from ..tui.tui import tui 
 from pathlib import Path
 
@@ -20,18 +21,23 @@ class ConvertProject:
         json_file = prj_src / "project.json"
         
         # nuke
-        if clear == True:
-            def nuke(path):
-                if os.path.isdir(path):
-                    shutil.rmtree(path)
-                else:
-                    pass
-            
-                safe_nuke(sprite_fl)
-                safe_nuke(extension_fl)
-                safe_nuke(stage_dir)
+        def safe_nuke(path):
+            if os.path.isdir(path):
+                for item in os.listdir(path):
+                    full_path = os.path.join(path, item)
+                    if os.path.isfile(full_path) or os.path.islink(full_path):
+                        os.remove(full_path)
+                    elif os.path.isdir(full_path):
+                        shutil.rmtree(full_path)
         
-        
+                
+        if clear is True:
+            safe_nuke(sprite_fl)
+            safe_nuke(extension_fl)
+            safe_nuke(stage_dir)
+            safe_nuke(extension_fl)
+            safe_nuke(fonts_fl)
+
         extension_fl.mkdir(parents=True, exist_ok=True)
 
         
