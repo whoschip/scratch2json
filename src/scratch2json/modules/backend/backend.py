@@ -1,7 +1,10 @@
 from flask import Flask
 from .routes import backend_bp
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
 app.register_blueprint(backend_bp, url_prefix='/api')
 
 @app.route("/")

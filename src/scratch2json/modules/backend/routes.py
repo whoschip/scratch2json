@@ -30,4 +30,4 @@ def upload_zip():
         zip_ref.extractall(builddir)
         ck.convert(dst, builddir)
 
-    return {"msg": f"✅ extracted to {builddir} twin 🔥"}
+    return {"msg": f"converted to {builddir}"}
