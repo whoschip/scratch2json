@@ -16,9 +16,18 @@ Supports compatibility with [TurboWarp](https://turbowarp.org) and [PenguinMod](
 
 ```bash
 git clone https://github.com/yourname/scratch2github
-cd scratch2github
+cd scratch2json
 pip install .
 ```
+### For extension
+
+Grab one of these into your project, then start the server by running: 
+
+```bash
+scratch2json server --start
+```
+make sure you're in the folder you want your project save to
+
 ---
 
 ## TODO
