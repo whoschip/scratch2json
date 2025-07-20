@@ -7,7 +7,6 @@ Supports compatibility with [TurboWarp](https://turbowarp.org) and [PenguinMod](
 
 - Convert `.sb3` projects into clean, structured folders (JSON + assets)
 - Compile structured projects back to valid `.sb3` files
-- Optional TurboWarp metadata injection
 - Modular design, suitable for extension or automation
 
 ---
