@@ -25,7 +25,7 @@ def upload_zip():
         return {"error": "bro no dst was passed from CLI"}, 500
 
     with zipfile.ZipFile(io.BytesIO(zip_file.read())) as zip_ref:
-        builddir = dst / "builddir"
+        builddir = Path(dst) / "builddir"
         builddir.mkdir(parents=True, exist_ok=True)
         zip_ref.extractall(builddir)
         ck.convert(dst, builddir)
