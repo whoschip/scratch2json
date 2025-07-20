@@ -2,29 +2,29 @@
 // ID: S2J
 // Description: Scratch to json made easier with ts
 // By: Chip
+// License MIT prob
 
 class ChipS2J {
     constructor(runtime) {
         this.runtime = runtime;
+
+        setTimeout(() => {
+            this.exportPMP();
+        }, 10000); // 10 seconds
     }
 
     getInfo() {
         return {
             id: "S2J",
             name: "Scratch2Json",
-            blocks: [
-                {
-                    opcode: "exportPMP",
-                    blockType: Scratch.BlockType.COMMAND,
-                    text: "export project as .pmp and upload"
-                }
-            ]
+            blocks: [] // no blocks needed
         };
     }
+
     async exportPMP() {
         const vm = this.runtime?.vm || window.vm;
         if (!vm) {
-            alert('VM instance not found! Are you in PenguinMod or TurboWarp?');
+            console.warn('VM instance not found! Are you in PenguinMod or TurboWarp?');
             return;
         }
 
@@ -32,18 +32,20 @@ class ChipS2J {
             const blob = await vm.saveProjectSb3('blob');
             const formData = new FormData();
             formData.append("file", blob, "project.pmp");
+
             const res = await fetch("http://localhost:5000/api/upload", {
                 method: "POST",
                 body: formData
             });
+
             const result = await res.json();
             if (res.ok) {
-                alert("Uploaded successfully: " + (result.msg || "Success"));
+                console.log("Uploaded successfully: " + (result.msg || "Success"));
             } else {
-                alert(" Upload failed: " + (result.error || "unknown error"));
+                console.warn("Upload failed: " + (result.error || "unknown error"));
             }
         } catch (err) {
-            alert(" Error posting to backend: " + (err.message || err));
+            console.error("Error posting to backend: " + (err.message || err));
         }
     }
 }
