@@ -156,7 +156,8 @@ class ConvertProject:
                 script.write(blocks_str)
 
     def process_sprite(self, target, prj_src, sprite_fl):
-        sprite_name = target['name']
+        raw_sprite_name = target['name']
+        sprite_name = raw_sprite_name.replace("/", "_")  
         sprite = sprite_fl / sprite_name
         sprite.mkdir(parents=True, exist_ok=True)
         print(f"Processing Sprites : {sprite_name}")

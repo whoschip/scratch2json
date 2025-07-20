@@ -141,7 +141,7 @@ class ReconstructProject:
 
             sprite_target = {
                 "isStage": False,
-                "name": sprite_dir.name,
+                "name": sprite_dir.name.replace("_", "/"),
                 "variables": {},
                 "lists": {},
                 "broadcasts": {},
@@ -163,19 +163,18 @@ class ReconstructProject:
                 "rotationStyle": "all around",
                 "extensionData": {}
             }
-
             meta_file = sprite_dir / "sprite_meta.json"
             if meta_file.exists():
                 with open(meta_file, "r", encoding="utf-8") as f:
                     sprite_target.update(json.load(f))
-                    print(f"Sprite meta loaded for {sprite_dir.name}")
+                    print(f"\nSprite meta loaded for {sprite_dir.name.replace("_", "/")}")
 
             self._load_media(sprite_dir, "sounds", output_zip_content, sprite_target, "sounds")
             self._load_media(sprite_dir, "costumes", output_zip_content, sprite_target, "costumes")
             self._load_script(sprite_dir, "script.json", sprite_target, "blocks")
 
             project_data["targets"].append(sprite_target)
-            print(f"\nSprite '{sprite_dir.name}' reconstructed")
+            print(f"Sprite '{sprite_dir.name.replace("_", "/")}' reconstructed")
 
     def _load_media(self, base_path, subfolder, output_path, target_obj, key):
         config_path = base_path / subfolder / "config.json" if subfolder else base_path / "config.json"
