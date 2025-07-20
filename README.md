@@ -53,5 +53,5 @@ make sure you're in the folder you want your project save to
 - [x] Write scratch2json CLI  
 - [x] Learn js and make a ext to auto load & Make backend for the js ext (help needed)
 - [x] Add folder support
-- [ ] Add font support
-- [ ] All good  
+- [x] Add font support
+- [x] All good  
