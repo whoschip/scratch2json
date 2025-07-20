@@ -32,6 +32,6 @@ def upload_zip():
         builddir = Path(dst) / "builddir"
         builddir.mkdir(parents=True, exist_ok=True)
         zip_ref.extractall(builddir)
-        ck.convert(dst, builddir, True)
+        ck.convert(dst, builddir, clear=True)
 
     return {"msg": f"converted to {builddir}"}
