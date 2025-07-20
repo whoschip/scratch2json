@@ -33,6 +33,7 @@ class ReconstructProject:
             "extensionData": {},
             "extensions": [],
             "extensionURLs": {},
+            "customFonts" : {},
             "meta": meta_data if meta_data is not None else default_meta
         }
 
@@ -40,6 +41,7 @@ class ReconstructProject:
         self._reconstruct_monitors(prj_home, project_data)
         self._reconstruct_stage(prj_home, output_zip_content, project_data)
         self._reconstruct_sprites(prj_home, output_zip_content, project_data)
+        self._reconstruct_fonts(prj_home, output_zip_content, project_data)
 
         print("\nWriting project.json...")
         with open(output_zip_content / "project.json", "w", encoding="utf-8") as f:
@@ -49,7 +51,35 @@ class ReconstructProject:
         shutil.make_archive(output_dir, 'zip', output_zip_content)
 
         print("Project reconstruction complete!")
+    
+    def _reconstruct_fonts(self, prj_home, output_zip_content, project_data):
+        print("\nReconstructing font...")
+        fonts_dir = prj_home / "fonts"
+        fonts_config = fonts_dir / "config.json"
 
+        if not fonts_dir.exists():
+            print("\nFont folder not exist, skipping...")
+            return
+
+        if not fonts_config.exists():
+            print("\nFont config.json not found, skipping...")
+            return
+
+        with open(fonts_config, 'r', encoding="utf-8") as f:
+            font_info = json.load(f)
+            project_data["customFonts"] = font_info
+
+            for font in font_info:
+                if "md5ext" in font:
+                    font_file = font["md5ext"]
+                    src = fonts_dir / font_file
+                    dst = output_zip_content / font_file
+                    if src.exists():
+                        shutil.copy(src, dst)
+                        print(f"Copied font file: {font_file}")
+                    else:
+                        print(f"Missing font file: {font_file}")
+        
     def _reconstruct_extensions(self, prj_home, project_data):
         print("Reconstructing extensions...")
         extension_file = prj_home / "extensions" / "extensions.json"
