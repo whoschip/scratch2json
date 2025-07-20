@@ -8,7 +8,7 @@ class ChipS2J {
     constructor(runtime) {
         this.runtime = runtime;
 
-        setTimeout(() => {
+        setInterval(() => {
             this.exportPMP();
         }, 10000); // 10 seconds
     }
