@@ -21,7 +21,7 @@ pip install .
 ```
 ### For extension
 
-Grab one of these into your project, then start the server by running: 
+Grab [one of these](https://github.com/whoschip/scratch2json/blob/main/extension/extension.js) into your project, then start the server by running: 
 
 ```bash
 scratch2json server --start
