@@ -48,4 +48,4 @@ class ChipS2J {
     }
 }
 
-Scratch.extensions.register(new ExportPMP(Scratch.vm.runtime));
+Scratch.extensions.register(new ChipS2J(Scratch.vm.runtime));
