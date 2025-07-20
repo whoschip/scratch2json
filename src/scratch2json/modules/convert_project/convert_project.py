@@ -15,6 +15,7 @@ class ConvertProject:
         prj_src = Path(zip_path)
         sprite_fl = prj_home / "sprites"
         extension_fl = prj_home / "extensions"
+        fonts_fl = prj_home / "fonts"
         stage_dir = prj_home / "stage"
         json_file = prj_src / "project.json"
         
@@ -67,6 +68,11 @@ class ConvertProject:
                     # Process Sprites
                     elif 'name' in target:
                         self.process_sprite(target, prj_src, sprite_fl)
+                    # Process Fonts
+                    custom_fonts = project_data.get("customFonts", [])
+                    if isinstance(custom_fonts, list) and custom_fonts:
+                        self.process_fonts(custom_fonts, prj_src, fonts_fl)
+                    
             except json.JSONDecodeError as e: 
                 print(f"Error decoding project.json: {e}")
             except Exception as e:
@@ -283,3 +289,24 @@ class ConvertProject:
                         print(f"\nextensionData saved to {ext_data_file}")
             except Exception as e:
                 print(f"Error extracting extensionData: {e}")
+    
+    def process_fonts(self, custom_fonts, prj_src, fonts_fl):
+        print("\nProcessing fonts...")
+        fonts_fl.mkdir(parents=True, exist_ok=True)
+        config = []
+
+        for font in custom_fonts:
+            config.append(font)
+            if "md5ext" in font:
+                font_file = font["md5ext"]
+                font_src = prj_src / font_file
+                if font_src.exists():
+                    shutil.copy(font_src, fonts_fl)
+                    print(f"Copied font file: {font_file}")
+                else:
+                    print(f"Font file not found: {font_file}")
+
+        config_path = fonts_fl / "config.json"
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(config, f, indent=4)
+        print(f"\nSaved font config to: {config_path}")
