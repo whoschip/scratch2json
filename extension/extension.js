@@ -7,18 +7,28 @@
 class ChipS2J {
     constructor(runtime) {
         this.runtime = runtime;
+        this.saveTimeout = null;
 
-        setInterval(() => {
-            this.exportPMP();
-        }, 10000); // 10 seconds
+        this.runtime.on("PROJECT_CHANGED", () => {
+            this.scheduleSave();
+        });
     }
 
     getInfo() {
         return {
             id: "S2J",
             name: "Scratch2Json",
-            blocks: [] // no blocks needed
+            blocks: [] // No blocks needed
         };
+    }
+
+    scheduleSave() {
+        if (this.saveTimeout) {
+            clearTimeout(this.saveTimeout);
+        }
+        this.saveTimeout = setTimeout(() => {
+            this.exportPMP();
+        }, 10000);
     }
 
     async exportPMP() {
