@@ -7,7 +7,7 @@ from scratch2json.modules.convert_project.convert_project import ConvertProject
 
 backend_bp = Blueprint("backend", __name__)
 
-@backend_bp.route("/ping")
+@backend_bp.route("/fetch")
 def ping():
     return {"version" : "0.1.0", "msg" : "pong"}
 
