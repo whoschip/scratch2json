@@ -19,6 +19,7 @@ class ConvertProject:
         fonts_fl = prj_home / "fonts"
         stage_dir = prj_home / "stage"
         json_file = prj_src / "project.json"
+        monitors = prj_home / "monitors.json"
         
         # nuke
         def safe_nuke(path):
@@ -29,14 +30,15 @@ class ConvertProject:
                         os.remove(full_path)
                     elif os.path.isdir(full_path):
                         shutil.rmtree(full_path)
-        
-                
+
         if clear is True:
             safe_nuke(sprite_fl)
             safe_nuke(extension_fl)
             safe_nuke(stage_dir)
-            safe_nuke(extension_fl)
             safe_nuke(fonts_fl)
+
+        if monitors.exists():
+            monitors.unlink()
 
         extension_fl.mkdir(parents=True, exist_ok=True)
 
